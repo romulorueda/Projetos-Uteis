@@ -1,0 +1,9 @@
+requests
+SpeechRecognition
+gTTS
+pygame
+deep-translator
+numpy
+pyttsx3
+Pillow
+pyaudio
