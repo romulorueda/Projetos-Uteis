@@ -19,7 +19,7 @@ from PIL import Image, ImageTk, ImageSequence
 # --- CONFIG HUGGING FACE ---
 API_URL = "https://router.huggingface.co/v1/chat/completions"
 HEADERS = {
-    "Authorization": f"Bearer SEU_ToKEN_AQUI",
+    "Authorization": f"Bearer SEU_ToKEN_AQUII",
     "Accept-Encoding": "identity"
 }
 

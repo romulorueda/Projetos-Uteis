@@ -13,7 +13,7 @@ with open('produtos.txt', 'r') as arquivo:
         quantidade = linha.split(',')[1]
         preco = linha.split(',')[2]
 
-        pyautogui.click(127,46, duration=2)
+        pyautogui.click(127,46, duration=1.5)
         pyautogui.write(produto)
 
         pyautogui.click(128,76, duration=2)
