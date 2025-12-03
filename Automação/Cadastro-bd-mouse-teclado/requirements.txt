@@ -1,0 +1,4 @@
+pyautogui
+mysql-connector-python
+reportlab
+pillow

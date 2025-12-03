@@ -1,15 +1,22 @@
-# Ambiente virtual
-venv/
-
-# Arquivos Python desnecessários
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.egg-info/
 
-# Docker volumes
-mysql-data/
-
-# Configurações do VS Code
+# VS Code
 .vscode/
 
-# Logs
+# Docker
+docker-compose.override.yml
 *.log
+*.pid
+mysql-data/
+*.env
+
+# IDEs e sistema
+.DS_Store
+Thumbs.db
