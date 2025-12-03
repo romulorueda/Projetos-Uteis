@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
 import mysql.connector
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from datetime import datetime
+
 
 # -----------------------------------
 # Conexão com MySQL no Docker
@@ -35,6 +39,65 @@ def carregar_produtos(listbox):
     for prod, qtd, val in dados:
         linha = f"{prod.ljust(20)} {str(qtd).ljust(8)} {str(val).ljust(10)}"
         listbox.insert(tk.END, linha)
+
+
+def limpar_listbox():
+    listbox_produtos.delete(0, tk.END)
+
+
+
+def gerar_relatorio(lista):
+    # Nome do arquivo PDF com data/hora
+    nome_pdf = f"relatorio_produtos_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
+
+    # Criando o PDF
+    c = canvas.Canvas(nome_pdf, pagesize=letter)
+    largura, altura = letter
+
+    # Título
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(40, altura - 50, "Relatório de Produtos")
+
+    # Cabeçalho
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(40, altura - 90, "Produto")
+    c.drawString(250, altura - 90, "Quantidade")
+    c.drawString(350, altura - 90, "Valor (R$)")
+
+    # Linha inicial dos dados
+    y = altura - 110
+
+    c.setFont("Helvetica", 11)
+
+    # Começar a partir da terceira linha (porque as duas primeiras são cabeçalho)
+    for i in range(2, lista.size()):
+        linha = lista.get(i)
+        partes = linha.split()
+
+        try:
+            produto = partes[0]
+            quantidade = partes[-3]   # "Qtd: X"
+            valor = partes[-1]        # "R$: Y"
+
+            # Escrever no PDF
+            c.drawString(40, y, produto)
+            c.drawString(250, y, quantidade.replace("Qtd:", ""))
+            c.drawString(350, y, valor.replace("R$:", ""))
+
+            y -= 20
+
+            # Quebra de página automática
+            if y < 40:
+                c.showPage()
+                y = altura - 50
+
+        except:
+            pass
+
+    # Finaliza o PDF
+    c.save()
+
+    messagebox.showinfo("Relatório Gerado", f"Relatório salvo como:\n{nome_pdf}")
 
 
 # -----------------------------------
@@ -126,13 +189,47 @@ def tela_produtos():
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao deletar:\n{e}")
 
+
+    def deletar_todos_produtos():
+        resposta = messagebox.askyesno(
+            "Confirmar",
+            "Tem certeza que deseja apagar TODOS os produtos?"
+        )
+
+        if resposta:
+            try:
+                con = conectar()
+                cursor = con.cursor()
+                cursor.execute("DELETE FROM produtos")
+                con.commit()
+                con.close()
+
+                carregar_produtos(lista)
+                messagebox.showinfo("Sucesso", "Todos os produtos foram apagados!")
+
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao apagar produtos:\n{e}")
+
+
+
     # Botão Registrar
     tk.Button(janela_produtos, text="Registrar Produto", command=registrar_produto).grid(
         row=3, column=1, pady=20
     )
+    tk.Button(janela_produtos, text="Gerar Relatório", command=lambda: gerar_relatorio(lista)).grid(
+    row=6, column=3, pady=10
+    )
     tk.Button(janela_produtos, text="Deletar Produto", command=deletar_produto, bg="red", fg="white").grid(
     row=4, column=1, pady=10
     )
+    tk.Button(
+        janela_produtos,
+        text="Limpar TODOS os Produtos",
+        command=deletar_todos_produtos,
+        bg="darkred",
+        fg="white"
+        ).grid(row=5, column=1, pady=10)
+
 
 
     janela_produtos.mainloop()
