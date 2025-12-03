@@ -1,0 +1,15 @@
+# Ambiente virtual
+venv/
+
+# Arquivos Python desnecessários
+__pycache__/
+*.pyc
+
+# Docker volumes
+mysql-data/
+
+# Configurações do VS Code
+.vscode/
+
+# Logs
+*.log
